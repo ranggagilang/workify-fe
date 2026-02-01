@@ -1,7 +1,8 @@
 import { getRequestConfig } from "next-intl/server";
 import { routing } from "./routing";
 
-// 🔥 STATIC IMPORT: Cara paling aman untuk Vercel Edge
+// 🔥 STATIC IMPORT: Cara paling aman 100% untuk Vercel Edge
+// Sesuaikan path ini dengan folder dictionaries kamu
 import enMessages from "../dictionaries/homepage/en.json";
 import idMessages from "../dictionaries/homepage/id.json";
 
