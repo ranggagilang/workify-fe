@@ -1,17 +1,18 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import createMiddleware from "next-intl/middleware";
-import { routing } from './i18n/routing';
-
-const intlMiddleware = createMiddleware(routing);
 
 export default function middleware(request: NextRequest) {
-  if (request.nextUrl.pathname === '/') {
+  const { pathname } = request.nextUrl;
+
+  // Langsung arahkan halaman utama ke login
+  if (pathname === '/') {
     return NextResponse.redirect(new URL('/login', request.url));
   }
-  return intlMiddleware(request);
+
+  return NextResponse.next();
 }
 
 export const config = {
+  // Lindungi rute standar, abaikan file statis
   matcher: ['/((?!api|_next|_vercel|.*\\..*).*)']
 };
