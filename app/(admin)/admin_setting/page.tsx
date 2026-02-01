@@ -1,13 +1,13 @@
 'use client'; 
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react'; // 🔥 Tambah Suspense di sini
 import { useSearchParams } from 'next/navigation'; 
 import axios from 'axios';
 import {
   HiOutlinePencilSquare,
   HiOutlineUserCircle,
   HiOutlineKey,
-  HiMapPin,                 
+  HiMapPin,                
   HiOutlineDevicePhoneMobile, 
   HiBuildingOffice2,
   HiDocumentText, 
@@ -15,7 +15,7 @@ import {
   HiPlus,
   HiArrowDownTray,
   HiCheckCircle,
-  HiOutlinePhoto // Icon tambahan untuk upload logo
+  HiOutlinePhoto 
 } from 'react-icons/hi2';
 
 // --- TIPE DATA ---
@@ -26,13 +26,14 @@ const COUNTRY_OPTIONS = [
   "Indonesia", "Malaysia", "Singapore", "Thailand", "Vietnam", "Philippines", "Other"
 ];
 
-export default function SettingPage() {
+// 🔥 Ganti 'export default' menjadi fungsi biasa
+function SettingPage() { 
   const searchParams = useSearchParams();
   
   // Refs
   const profileInputRef = useRef<HTMLInputElement>(null);
   const letterInputRef = useRef<HTMLInputElement>(null);
-  const companyLogoRef = useRef<HTMLInputElement>(null); // Ref baru untuk logo perusahaan
+  const companyLogoRef = useRef<HTMLInputElement>(null); 
   
   // --- STATE MANAGEMENT ---
   const [activeTab, setActiveTab] = useState<SettingTab>('profile');
@@ -47,7 +48,7 @@ export default function SettingPage() {
   // State Form Company
   const [companyForm, setCompanyForm] = useState({
       name: '', phone: '', address: '',
-      image: '', // Field baru untuk logo
+      image: '', 
       workingType: 'HYBRID',
       latitude: '', longitude: '', radiusKm: 0.1
   });
@@ -101,7 +102,7 @@ export default function SettingPage() {
                 name: company.name || '',
                 phone: company.phone || '',
                 address: company.address || '',
-                image: company.image || '', // Load logo perusahaan
+                image: company.image || '', 
                 workingType: company.workingType || 'HYBRID', 
                 latitude: company.latitude || '',
                 longitude: company.longitude || '',
@@ -118,7 +119,6 @@ export default function SettingPage() {
     }
   };
 
-  // --- LOGIC UPLOAD LOGO PERUSAHAAN ---
   const handleCompanyLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -131,7 +131,6 @@ export default function SettingPage() {
     };
   };
 
-  // --- 2. LOGIC LETTER TEMPLATES ---
   const fetchTemplates = async () => {
       try {
           const res = await axios.get('http://localhost:4000/api/letters', getHeaders());
@@ -212,7 +211,6 @@ export default function SettingPage() {
       } catch (e) { alert("Gagal hapus data."); }
   };
 
-  // --- 3. LOGIC PROFILE ---
   const handleUserChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
       setUserData({ ...userData, [e.target.name]: e.target.value });
   };
@@ -261,7 +259,6 @@ export default function SettingPage() {
     };
   };
 
-  // --- 4. LOGIC COMPANY SETTING ---
   const handleGetMyLocation = () => {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -390,7 +387,6 @@ export default function SettingPage() {
                    <div className="space-y-6">
                        <h4 className="font-bold text-gray-700 border-b pb-2 flex items-center gap-2"><HiBuildingOffice2 className="w-5 h-5 text-[#19A0FA]"/> Profil Kantor</h4>
                        
-                       {/* 👇 TAMBAHAN: UPLOAD LOGO PERUSAHAAN */}
                        <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl border border-dashed border-gray-300">
                           <div className="relative group cursor-pointer" onClick={() => companyLogoRef.current?.click()}>
                             {companyForm.image ? (
@@ -571,6 +567,15 @@ export default function SettingPage() {
       )}
 
     </main>
+  );
+}
+
+// 🔥 Tambahkan fungsi pembungkus Suspense di bawah sini
+export default function SuspenseSettingPage() {
+  return (
+    <Suspense fallback={<div className="p-10 text-center text-[#19A0FA] font-bold">Loading Settings...</div>}>
+      <SettingPage />
+    </Suspense>
   );
 }
 
