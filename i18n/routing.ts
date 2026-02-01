@@ -2,13 +2,9 @@ import { defineRouting } from "next-intl/routing";
 import { createNavigation } from "next-intl/navigation";
 
 export const routing = defineRouting({
-  // 🔥 Tulis langsung di sini, jangan ambil dari @/lib/locales
+  // Tulis manual di sini, JANGAN import dari file luar
   locales: ["id", "en"],
-
-  // Gunakan bahasa Indonesia sebagai default
   defaultLocale: "id",
-
-  // ✅ Tambahkan ini agar URL kamu tetap bersih (tanpa /id/ di depan)
   localePrefix: "as-needed"
 });
 
