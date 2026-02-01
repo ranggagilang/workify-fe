@@ -1,23 +1,30 @@
 import { getRequestConfig } from "next-intl/server";
-import { routing } from "./routing";
 
-// 🔥 STATIC IMPORT: Cara paling aman 100% untuk Vercel Edge
-// Sesuaikan path ini dengan folder dictionaries kamu
-import enMessages from "../dictionaries/homepage/en.json";
-import idMessages from "../dictionaries/homepage/id.json";
+// 🔥 DATA BAHASA LANGSUNG DI DALAM KODE (ANTI ERROR __DIRNAME)
+const messagesData: Record<string, any> = {
+  id: {
+    "homepage": {
+      "title": "cmlabs Next.js Boilerplate",
+      "description": "Boilerplate untuk proyek Next.js dengan TypeScript, Tailwind CSS, dan banyak lagi."
+    }
+  },
+  en: {
+    "homepage": {
+      "title": "cmlabs Next.js Boilerplate",
+      "description": "A boilerplate for Next.js projects with TypeScript, Tailwind CSS, and more."
+    }
+  }
+};
 
 export default getRequestConfig(async (params: any) => {
+  // Ambil locale dari params
   const locale = await params.locale;
   
-  const activeLocale = routing.locales.includes(locale as any) 
-    ? locale 
-    : routing.defaultLocale;
-
-  // Pilih pesan berdasarkan locale tanpa 'await import' dinamis
-  const messages = activeLocale === 'en' ? enMessages : idMessages;
+  // Gunakan 'id' jika locale tidak ditemukan
+  const activeLocale = messagesData[locale] ? locale : 'id';
 
   return {
     locale: activeLocale,
-    messages
+    messages: messagesData[activeLocale]
   };
 });
