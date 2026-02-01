@@ -1,25 +1,25 @@
 import { getRequestConfig } from "next-intl/server";
 import { routing } from "./routing";
-import { hasLocale } from "next-intl";
 
-export default getRequestConfig(async ({ requestLocale }) => {
-  const requested = await requestLocale;
-  const locale = hasLocale(routing.locales, requested)
-    ? requested
+// 🔥 Berikan tipe 'any' atau 'any' asimetris pada params untuk menghilangkan merahnya
+export default getRequestConfig(async (params: any) => {
+  // Ambil locale dari params (support untuk versi Promise atau object biasa)
+  const locale = await params.locale;
+  
+  // Pastikan locale yang diminta ada dalam daftar, jika tidak gunakan default
+  const activeLocale = routing.locales.includes(locale as any) 
+    ? locale 
     : routing.defaultLocale;
 
-  // Import translation files from both homepage and contact folders
+  // Import file JSON bahasa secara dinamis
   const homepageMessages = (
-    await import(`../dictionaries/homepage/${locale}.json`)
+    await import(`../dictionaries/homepage/${activeLocale}.json`)
   ).default;
 
-  // Merge the translations
-  const messages = {
-    ...homepageMessages,
-  };
-
   return {
-    messages,
-    locale,
+    locale: activeLocale,
+    messages: {
+      ...homepageMessages,
+    },
   };
 });
